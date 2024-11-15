@@ -23,7 +23,7 @@ func Execute(context context.Context) int {
 		Short: "check",
 
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			if cpuProfile == false {
+			if !cpuProfile {
 				return nil
 			}
 
@@ -36,7 +36,7 @@ func Execute(context context.Context) int {
 			return nil
 		},
 		PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
-			if cpuProfile == false {
+			if !cpuProfile {
 				return nil
 			}
 
@@ -54,6 +54,8 @@ func Execute(context context.Context) int {
 			return err
 		},
 	}
+
+	rootcmd.PersistentFlags().BoolVarP(&cpuProfile, "profile", "p", false, "record cpu profile")
 
 	return 0
 }
