@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func Execute(context context.Context) int {
+func Execute(ctx context.Context) int {
 	err := godotenv.Load()
 	if err != nil {
 		return 1
@@ -57,6 +57,7 @@ func Execute(context context.Context) int {
 	}
 
 	rootcmd.PersistentFlags().BoolVarP(&cpuProfile, "profile", "p", false, "record cpu profile")
+	rootcmd.AddCommand(APICmd(ctx))
 
 	// Debug profiling and runtime metrics
 	go func() {
