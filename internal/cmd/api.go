@@ -7,6 +7,7 @@ import (
 
 	"github.com/briheet/gxAssign/internal/cmdutil"
 	"github.com/spf13/cobra"
+	"go.uber.org/zap"
 )
 
 func APICmd(ctx context.Context) *cobra.Command {
@@ -24,6 +25,20 @@ func APICmd(ctx context.Context) *cobra.Command {
 			}
 
 			logger := cmdutil.NewLogger("api")
+			defer func() { _ = logger.Sync() }()
+
+			api := api.NewAPI(ctx, logger)
+			srv := api.Server(port)
+
+			go func() {
+				_ = srv.ListenAnsServe()
+			}()
+
+			logger.Info("started api", zap.Int("port", port))
+
+			<-ctx.Done()
+
+			_ = srv.ShutDown(ctx)
 
 			return nil
 		},
