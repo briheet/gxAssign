@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"net/http"
 	"os"
 	"runtime"
 	"runtime/pprof"
@@ -56,6 +57,16 @@ func Execute(context context.Context) int {
 	}
 
 	rootcmd.PersistentFlags().BoolVarP(&cpuProfile, "profile", "p", false, "record cpu profile")
+
+	// Debug profiling and runtime metrics
+	go func() {
+		_ = http.ListenAndServe("localhost:6060", nil)
+	}()
+
+	err = rootcmd.Execute()
+	if err != nil {
+		return 1
+	}
 
 	return 0
 }
