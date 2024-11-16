@@ -3,6 +3,7 @@ module github.com/briheet/gxAssign
 go 1.23.2
 
 require (
+	github.com/gorilla/mux v1.8.1
 	github.com/joho/godotenv v1.5.1
 	github.com/spf13/cobra v1.8.1
 	go.uber.org/zap v1.27.0

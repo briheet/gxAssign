@@ -5,6 +5,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/briheet/gxAssign/internal/api"
 	"github.com/briheet/gxAssign/internal/cmdutil"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
@@ -21,7 +22,7 @@ func APICmd(ctx context.Context) *cobra.Command {
 			port = 4000
 
 			if os.Getenv("PORT") != "" {
-				port, _ := strconv.Atoi(os.Getenv("PORT"))
+				port, _ = strconv.Atoi(os.Getenv("PORT"))
 			}
 
 			logger := cmdutil.NewLogger("api")
@@ -31,14 +32,14 @@ func APICmd(ctx context.Context) *cobra.Command {
 			srv := api.Server(port)
 
 			go func() {
-				_ = srv.ListenAnsServe()
+				_ = srv.ListenAndServe()
 			}()
 
 			logger.Info("started api", zap.Int("port", port))
 
 			<-ctx.Done()
 
-			_ = srv.ShutDown(ctx)
+			_ = srv.Shutdown(ctx)
 
 			return nil
 		},
