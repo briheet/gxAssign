@@ -13,6 +13,7 @@ import (
 
 func APICmd(ctx context.Context) *cobra.Command {
 	var port int
+	var dbName string
 
 	cmd := &cobra.Command{
 		Use:   "api",
@@ -20,6 +21,7 @@ func APICmd(ctx context.Context) *cobra.Command {
 		Short: "Runs the Restful API",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			port = 4000
+			dbName = "gxAssign"
 
 			if os.Getenv("PORT") != "" {
 				port, _ = strconv.Atoi(os.Getenv("PORT"))
@@ -28,7 +30,11 @@ func APICmd(ctx context.Context) *cobra.Command {
 			logger := cmdutil.NewLogger("api")
 			defer func() { _ = logger.Sync() }()
 
-			api := api.NewAPI(ctx, logger)
+			if os.Getenv("DB_NAME") != "" {
+				dbName = os.Getenv("DB_NAME")
+			}
+
+			api := api.NewAPI(ctx, logger, dbName)
 			srv := api.Server(port)
 
 			go func() {

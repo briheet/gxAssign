@@ -1,16 +1,25 @@
 package api
 
 import (
-	"encoding/json"
 	"net/http"
+
+	"go.uber.org/zap"
 )
 
 func (a *api) healthCheckHandler(w http.ResponseWriter, r *http.Request) {
-	data := map[string]string{
-		"status": "available",
+	ctx := r.Context()
+	collections := a.database.Collection("health")
+
+	_, err := collections.InsertOne(ctx, map[string]interface{}{"status": "healthy"})
+	if err != nil {
+		a.logger.Error("Failed to insert health check document", zap.Error(err))
+		http.Error(w, "Database error", http.StatusInternalServerError)
+		return
 	}
+
+	a.logger.Info("healthCheckHandler write successful", zap.Any("health", "ok"))
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
-	_ = json.NewEncoder(w).Encode(data)
+	w.Write([]byte("Service is healthy"))
 }
