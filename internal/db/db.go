@@ -25,7 +25,6 @@ func NewDB(ctx context.Context, dbName string) *DB {
 		log.Fatal(err)
 	}
 
-	log.Print("logged onto mongodb")
 	return &DB{
 		Client:   client,
 		Database: client.Database(dbName),

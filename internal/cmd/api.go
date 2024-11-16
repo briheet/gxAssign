@@ -42,6 +42,7 @@ func APICmd(ctx context.Context) *cobra.Command {
 			}()
 
 			logger.Info("started api", zap.Int("port", port))
+			logger.Info("started db", zap.String("db", dbName))
 
 			<-ctx.Done()
 

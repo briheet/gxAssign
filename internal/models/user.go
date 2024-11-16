@@ -7,8 +7,5 @@ type User struct {
 	Class     string `json:"class"`
 	Section   string `json:"section"`
 	Email     string `json:"email"`
-}
-
-type UserAuth struct {
-	Password string `json:"password"`
+	Password  string `json:"password"`
 }
