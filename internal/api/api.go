@@ -42,5 +42,7 @@ func (a *api) Routes() *mux.Router {
 	r.HandleFunc("/v1/health", a.healthCheckHandler).Methods("GET")
 	r.HandleFunc("/v1/register", a.register).Methods("POST")
 	r.HandleFunc("/v1/login", a.login).Methods("POST")
+	r.HandleFunc("/v1/upload", a.upload).Methods("POST")
+	r.HandleFunc("/v1/admins", a.getAdmins).Methods("GET")
 	return r
 }
