@@ -25,13 +25,14 @@ func (a *api) adminRegister(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
 	if admin.Email == "" || admin.Password == "" {
-		a.logger.Error("userEmail or userPassword issue in register", zap.Error(err))
+		a.logger.Error("adminEmail or adminPassword issue in register", zap.Error(err))
+
 		http.Error(w, "Email or Password not found", http.StatusBadRequest)
 		return
 	}
 
 	filter := bson.M{"email": admin.Email}
-	var existingAdmin models.User
+	var existingAdmin models.Admin
 
 	err = a.database.Collection("admins").FindOne(ctx, filter).Decode(&existingAdmin)
 	if err != nil && err != mongo.ErrNoDocuments {
@@ -57,19 +58,19 @@ func (a *api) adminRegister(w http.ResponseWriter, r *http.Request) {
 	_, err = a.database.Collection("admins").InsertOne(ctx, admin)
 	if err != nil {
 		http.Error(w, "internal server error", http.StatusInternalServerError)
-		a.logger.Error("Error creating a user", zap.Error(err))
+		a.logger.Error("Error creating a admin", zap.Error(err))
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(map[string]string{"message": "user created successfully"})
+	json.NewEncoder(w).Encode(map[string]string{"message": "admin created successfully"})
 }
 
 func (a *api) adminLogin(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	var adminDetails models.UserAuth
+	var adminDetails models.AdminAuth
 	err := json.NewDecoder(r.Body).Decode(&adminDetails)
 	if err != nil {
 		a.logger.Error("error via decoding admin details in register", zap.Error(err))
@@ -85,7 +86,7 @@ func (a *api) adminLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	filter := bson.M{"email": adminDetails.Email}
-	var existingAdminDetails *models.User
+	var existingAdminDetails *models.Admin
 
 	err = a.database.Collection("admins").FindOne(ctx, filter).Decode(&existingAdminDetails)
 	if err != nil {
