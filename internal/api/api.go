@@ -39,10 +39,19 @@ func (a *api) Server(port int) *http.Server {
 func (a *api) Routes() *mux.Router {
 	r := mux.NewRouter()
 
+	// health
 	r.HandleFunc("/v1/health", a.healthCheckHandler).Methods("GET")
-	r.HandleFunc("/v1/register", a.register).Methods("POST")
-	r.HandleFunc("/v1/login", a.login).Methods("POST")
-	r.HandleFunc("/v1/upload", a.upload).Methods("POST")
-	r.HandleFunc("/v1/admins", a.getAdmins).Methods("GET")
+
+	// user endpoints
+	r.HandleFunc("/v1/userRegister", a.userRegister).Methods("POST")
+	r.HandleFunc("/v1/userLogin", a.userLogin).Methods("POST")
+	r.HandleFunc("/v1/userUpload", a.userUpload).Methods("POST")
+	r.HandleFunc("/v1/userAdmins", a.getAdmins).Methods("GET")
+
+	// admin endpoints
+	r.HandleFunc("/v1/adminRegister", a.adminRegister).Methods("POST")
+	r.HandleFunc("/v1/adminLogin", a.adminLogin).Methods("POST")
+	r.HandleFunc("/v1/assignments", a.assignments).Methods("GET")
+
 	return r
 }

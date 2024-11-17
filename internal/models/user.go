@@ -19,9 +19,10 @@ type UserDocument struct {
 	UserID string `json:"userID" bson:"userID"`
 	Task   string `json:"task" bson:"task"`
 	Admin  string `json:"admin" bson:"admin"`
+	Status bool   `json:"status" bson:"status"`
 }
 
 type UserAdmins struct {
 	UserID string   `json:"userID" bson:"userID"`
-	Admin  []string `json:"admin" bson:"admin"`
+	Admins []string `json:"admin" bson:"admin"`
 }

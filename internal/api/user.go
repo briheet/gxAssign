@@ -11,7 +11,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func (a *api) login(w http.ResponseWriter, r *http.Request) {
+func (a *api) userLogin(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var usersDetails models.UserAuth
@@ -53,7 +53,7 @@ func (a *api) login(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"message": "login successful"})
 }
 
-func (a *api) register(w http.ResponseWriter, r *http.Request) {
+func (a *api) userRegister(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var user *models.User
@@ -108,7 +108,7 @@ func (a *api) register(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"message": "user created successfully"})
 }
 
-func (a *api) upload(w http.ResponseWriter, r *http.Request) {
+func (a *api) userUpload(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var userDocs models.UserDocument
@@ -176,6 +176,6 @@ func (a *api) getAdmins(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]interface{}{
 		"userID": userAdmins.UserID,
-		"admins": userAdmins.Admin,
+		"admins": userAdmins.Admins,
 	})
 }
