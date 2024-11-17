@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/briheet/gxAssign/internal/cmdutil"
 	"github.com/briheet/gxAssign/internal/models"
+	"github.com/briheet/gxAssign/internal/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.uber.org/zap"
@@ -43,7 +43,7 @@ func (a *api) login(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	if !cmdutil.CheckPasswordHash(usersDetails.Password, existingUserDetails.Password) {
+	if !utils.CheckPasswordHash(usersDetails.Password, existingUserDetails.Password) {
 		http.Error(w, "invalid email or password", http.StatusUnauthorized)
 		return
 	}
@@ -88,7 +88,7 @@ func (a *api) register(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	hashedPassword, err := cmdutil.HashPassword(user.Password)
+	hashedPassword, err := utils.HashPassword(user.Password)
 	if err != nil {
 		a.logger.Error("error hashing password", zap.Error(err))
 		http.Error(w, "internal server error", http.StatusInternalServerError)

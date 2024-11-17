@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/briheet/gxAssign/internal/api"
-	"github.com/briheet/gxAssign/internal/cmdutil"
+	"github.com/briheet/gxAssign/internal/utils"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
@@ -27,7 +27,7 @@ func APICmd(ctx context.Context) *cobra.Command {
 				port, _ = strconv.Atoi(os.Getenv("PORT"))
 			}
 
-			logger := cmdutil.NewLogger("api")
+			logger := utils.NewLogger("api")
 			defer func() { _ = logger.Sync() }()
 
 			if os.Getenv("DB_NAME") != "" {
