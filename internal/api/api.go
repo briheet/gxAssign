@@ -52,7 +52,8 @@ func (a *api) Routes() *mux.Router {
 	r.HandleFunc("/v1/adminRegister", a.adminRegister).Methods("POST")
 	r.HandleFunc("/v1/adminLogin", a.adminLogin).Methods("POST")
 	r.HandleFunc("/v1/assignments", a.assignments).Methods("GET")
-	r.HandleFunc("/v1/assignments/{id}/accept", a.acceptAssignment).Methods("POST")
+	r.HandleFunc("/v1/assignments/{id}/accept", a.acceptAssignments).Methods("POST")
+	r.HandleFunc("/v1/assignments/{id}/reject", a.rejectAssignments).Methods("POST")
 
 	return r
 }

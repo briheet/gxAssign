@@ -12,4 +12,12 @@ This is going to have features for both Admin and users with OAuth2.
 `POST /register` - Register a new User \
 `POST /login` - User login \
 `POST /upload` - Upload an Assignment \
-`GET /admins` - Fetchs all admins
+`GET /admins` - Fetches all admins
+
+## Admin Endpoints
+
+`POST /register` - Register a new Admin \
+`POST /login` - Admin login \
+`GET /assignments` - View assignments tagged to admin \
+`POST /assignments/:id/accept` - Accept an assignment \
+`POST /assignments/:id/reject` - Reject an assignment
