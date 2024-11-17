@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/briheet/gxAssign/internal/models"
 	"github.com/briheet/gxAssign/internal/utils"
@@ -153,4 +154,76 @@ func (a *api) assignments(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "error generating response", http.StatusInternalServerError)
 		return
 	}
+}
+
+func (a *api) acceptAssignments(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var admin models.Admin
+	err := json.NewDecoder(r.Body).Decode(&admin)
+	if err != nil {
+		a.logger.Error("error decoding admin details in acceptAndMoveAssignments", zap.Error(err))
+		http.Error(w, "invalid request payload", http.StatusBadRequest)
+		return
+	}
+	defer r.Body.Close()
+
+	if admin.Email == "" {
+		a.logger.Error("admin email is empty", zap.Error(err))
+		http.Error(w, "email is required", http.StatusBadRequest)
+		return
+	}
+
+	oldCollection := a.database.Collection("documents")
+	filter := bson.M{"admin": admin.Email}
+
+	var userDocuments []models.UserDocument
+	cursor, err := oldCollection.Find(ctx, filter)
+	if err != nil {
+		a.logger.Error("error finding user documents", zap.Error(err))
+		http.Error(w, "error fetching user documents", http.StatusInternalServerError)
+		return
+	}
+	defer cursor.Close(ctx)
+
+	if err = cursor.All(ctx, &userDocuments); err != nil {
+		a.logger.Error("error decoding user documents", zap.Error(err))
+		http.Error(w, "error decoding user documents", http.StatusInternalServerError)
+		return
+	}
+
+	if len(userDocuments) == 0 {
+		http.Error(w, "no assignments found for this admin", http.StatusNotFound)
+		return
+	}
+
+	newCollection := a.database.Collection("accepted_documents")
+	acceptedDocuments := make([]interface{}, len(userDocuments))
+	for i, doc := range userDocuments {
+		acceptedDocuments[i] = bson.M{
+			"userID":     doc.UserID,
+			"task":       doc.Task,
+			"admin":      doc.Admin,
+			"status":     "accepted",
+			"acceptedAt": time.Now(),
+		}
+	}
+
+	_, err = newCollection.InsertMany(ctx, acceptedDocuments)
+	if err != nil {
+		a.logger.Error("error inserting into accepted_documents", zap.Error(err))
+		http.Error(w, "error processing user documents", http.StatusInternalServerError)
+		return
+	}
+
+	_, err = oldCollection.DeleteMany(ctx, filter)
+	if err != nil {
+		a.logger.Error("error deleting user documents from documents", zap.Error(err))
+		http.Error(w, "error deleting user documents", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "assignments accepted and moved successfully"})
 }

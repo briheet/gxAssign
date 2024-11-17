@@ -19,7 +19,7 @@ type UserDocument struct {
 	UserID string `json:"userID" bson:"userID"`
 	Task   string `json:"task" bson:"task"`
 	Admin  string `json:"admin" bson:"admin"`
-	Status bool   `json:"status" bson:"status"`
+	Status string `json:"status" bson:"status"`
 }
 
 type UserAdmins struct {
